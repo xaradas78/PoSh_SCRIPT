@@ -38,23 +38,30 @@ $ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-
 
 Log2File -LogFile $LAP -Message "Valore ip: $ip" -Type "Info"
 
-$ip = "169.254"
+#$ip = "169.254"
 
 if ($ip -eq $ApipaAddress)
 {
     Log2File -LogFile $LAP -Message "Attenzione IP in APIPA" -Type "Error"
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: netsh winsock reset" -Type "Warning"
     netsh winsock reset
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: netsh int ip reset" -Type "Warning"
     netsh int ip reset
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: netsh advfirewall reset" -Type "Warning"
     netsh advfirewall reset
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: netsh winhttp>reset proxy" -Type "Warning"
     netsh winhttp>reset proxy
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: ipconfig /release" -Type "Warning"
     ipconfig /release
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: ipconfig /renew" -Type "Warning"
     ipconfig /renew
+
     Log2File -LogFile $LAP -Message "Avvio azione correttiva: ipconfig /flushdns" -Type "Warning"
     ipconfig /flushdns
 }
@@ -62,4 +69,3 @@ else
 {
     Log2File -LogFile $LAP -Message "DHCP sembra essere operativo" -Type "Info"   
 }
-
