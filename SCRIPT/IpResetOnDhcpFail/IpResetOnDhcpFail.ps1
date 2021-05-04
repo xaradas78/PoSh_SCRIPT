@@ -33,7 +33,7 @@ if ($logFileSize -gt $maxLogFileSizeKB)
     Remove-Item -Path $LAP -Force
 }
 
-Log2File -LogFile $LAP -Message "Avvio controllo" -Type "Info"
+Log2File -LogFile $LAP -Message "Avvio" -Type "Info"
 
 $currentConf = Get-NetIPConfiguration -Detailed | Out-String -Width 200
 Log2File -LogFile $LAP -Message "Configurazione corrente" -Type "Info"
@@ -78,3 +78,5 @@ else
 {
     Log2File -LogFile $LAP -Message "DHCP sembra essere operativo" -Type "Info"   
 }
+
+Log2File -LogFile $LAP -Message "Fine" -Type "Info"
