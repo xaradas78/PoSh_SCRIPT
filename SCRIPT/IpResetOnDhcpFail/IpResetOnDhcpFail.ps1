@@ -33,25 +33,21 @@ if(!(Test-Path -path $BaseDirectory))
 [int]$logConfSize = 0
 if (Test-Path $LF -PathType leaf) { [int]$logFileSize = [math]::Round((Get-Item $LF).length/1024) }
 if (Test-Path $LC -PathType leaf) { [int]$logConfSize = [math]::Round((Get-Item $LC).length/1024) }
-
 if ($logFileSize -gt $maxLogFileSizeKB) { Remove-Item -Path $LF -Force }
 if ($logConfSize -gt $maxLogConfSizeKB) { Remove-Item -Path $LC -Force }
 
-
 Log2File -LogFile $LF -Message "Avvio" -Type "Info"
 
-$currentConf = Get-NetIPConfiguration -Detailed | Out-String -Width 200
 Log2File -LogFile $LF -Message "Export Configurazione corrente" -Type "Info"
+$currentConf = Get-NetIPConfiguration -Detailed | Out-String -Width 200
 Log2File -LogFile $LC -Message $currentConf -Type "Info"
 $currentConf = ipconfig /all | Out-String -Width 200
 Log2File -LogFile $LC -Message $currentConf -Type "Info"
 
 $ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
-
 Log2File -LogFile $LF -Message "Valore ip: $($ipAddress.IPAddress)" -Type "Info"
 
 [string]$ip = $ipAddress.IPAddress.Substring(0,7)
-
 #$ip = "169.254"
 
 if ($ip -eq $ApipaAddress)
