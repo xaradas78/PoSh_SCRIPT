@@ -29,8 +29,10 @@ if(!(Test-Path -path $BaseDirectory))
     New-Item -ItemType directory -Path $BaseDirectory
 }
 
-[int]$logFileSize = [math]::Round((Get-Item $LF).length/1024)
-[int]$logConfSize = [math]::Round((Get-Item $LC).length/1024)
+[int]$logFileSize = 0
+[int]$logConfSize = 0
+if (Test-Path $LF -PathType leaf) { [int]$logFileSize = [math]::Round((Get-Item $LF).length/1024) }
+if (Test-Path $LC -PathType leaf) { [int]$logConfSize = [math]::Round((Get-Item $LC).length/1024) }
 
 if ($logFileSize -gt $maxLogFileSizeKB) { Remove-Item -Path $LF -Force }
 if ($logConfSize -gt $maxLogConfSizeKB) { Remove-Item -Path $LC -Force }
