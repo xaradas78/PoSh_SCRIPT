@@ -13,10 +13,11 @@ function Log2File([String]$LogFile,[String]$Message,[ValidateSet('Info','Warning
 }
 
 # Variabili
-$ApipaAddress = "169.254"
-$BaseDirectory = "C:\SWSIA\logs"
-$LogFile = "IpResetOnDhcpFail.log"
-$LAP = $BaseDirectory + "\" + $LogFile
+[string]$ApipaAddress = "169.254"
+[string]$BaseDirectory = "C:\SWSIA\logs"
+[string]$LogFile = "IpResetOnDhcpFail.log"
+[string]$LAP = $BaseDirectory + "\" + $LogFile
+[int]$maxLogFileSizeKB = 15000
 
 
 # Logica
@@ -24,6 +25,14 @@ if(!(Test-Path -path $BaseDirectory))
 {  
     New-Item -ItemType directory -Path $BaseDirectory
 }
+
+[int]$logFileSize = [math]::Round((Get-Item $LAP).length/1024)
+
+if ($logFileSize -gt $maxLogFileSizeKB)
+{
+    Remove-Item -Path $LAP -Force
+}
+
 Log2File -LogFile $LAP -Message "Avvio controllo" -Type "Info"
 
 $currentConf = Get-NetIPConfiguration -Detailed | Out-String -Width 200
