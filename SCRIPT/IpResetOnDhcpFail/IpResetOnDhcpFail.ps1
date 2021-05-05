@@ -45,6 +45,7 @@ $currentConf = ipconfig /all | Out-String -Width 200
 Log2File -LogFile $LC -Message $currentConf -Type "Info"
 
 $ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
+#$ipAddress =  Get-NetAdapter -Physical | Where-Object {($_.Status -eq "Up") -and (($_.PhysicalMediaType -eq "802.3") -or ($_.PhysicalMediaType -eq "Native 802.11"))} | Get-NetIPAddress -AddressFamily IPv4 | Select-Objbect IPAddress
 
 if (-Not($ipAddress -is [array]))
 {
