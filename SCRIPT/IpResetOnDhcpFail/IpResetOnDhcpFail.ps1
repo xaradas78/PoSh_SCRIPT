@@ -45,39 +45,47 @@ $currentConf = ipconfig /all | Out-String -Width 200
 Log2File -LogFile $LC -Message $currentConf -Type "Info"
 
 $ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
-Log2File -LogFile $LF -Message "Valore ip: $($ipAddress.IPAddress)" -Type "Info"
 
-[string]$ip = $ipAddress.IPAddress.Substring(0,7)
-#$ip = "169.254"
-
-if ($ip -eq $ApipaAddress)
+if (-Not($ipAddress -is [array]))
 {
-    Log2File -LogFile $LF -Message "Attenzione IP in APIPA" -Type "Error"
+    Log2File -LogFile $LF -Message "Valore ip: $($ipAddress.IPAddress)" -Type "Info"
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh winsock reset" -Type "Warning"
-    netsh winsock reset
+    [string]$ip = $ipAddress.IPAddress.Substring(0,7)
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh int ip reset" -Type "Warning"
-    netsh int ip reset
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh advfirewall reset" -Type "Warning"
-    netsh advfirewall reset
+    if ($ip -eq $ApipaAddress)
+    {
+        Log2File -LogFile $LF -Message "Attenzione IP in APIPA" -Type "Error"
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh winhttp>reset proxy" -Type "Warning"
-    netsh winhttp>reset proxy
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh winsock reset" -Type "Warning"
+        netsh winsock reset
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /release" -Type "Warning"
-    ipconfig /release
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh int ip reset" -Type "Warning"
+        netsh int ip reset
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /renew" -Type "Warning"
-    ipconfig /renew
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh advfirewall reset" -Type "Warning"
+        netsh advfirewall reset
 
-    Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /flushdns" -Type "Warning"
-    ipconfig /flushdns
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: netsh winhttp>reset proxy" -Type "Warning"
+        netsh winhttp>reset proxy
+
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /release" -Type "Warning"
+        ipconfig /release
+
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /renew" -Type "Warning"
+        ipconfig /renew
+
+        Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /flushdns" -Type "Warning"
+        ipconfig /flushdns
+    }
+    else
+    {
+        Log2File -LogFile $LF -Message "DHCP sembra essere operativo" -Type "Info"   
+    }
+
+    Log2File -LogFile $LF -Message "Fine" -Type "Info"
 }
 else
 {
-    Log2File -LogFile $LF -Message "DHCP sembra essere operativo" -Type "Info"   
+    Log2File -LogFile $LF -Message "PC con più schede di rete" -Type "Info"
 }
-
-Log2File -LogFile $LF -Message "Fine" -Type "Info"
