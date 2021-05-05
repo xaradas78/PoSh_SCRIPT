@@ -50,9 +50,7 @@ $ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-
 if (-Not($ipAddress -is [array]))
 {
     Log2File -LogFile $LF -Message "Valore ip: $($ipAddress.IPAddress)" -Type "Info"
-
     [string]$ip = $ipAddress.IPAddress.Substring(0,7)
-
 
     if ($ip -eq $ApipaAddress)
     {
