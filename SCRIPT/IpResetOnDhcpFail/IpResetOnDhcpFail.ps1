@@ -19,6 +19,9 @@ function Log2File([String]$LogFile,[String]$Message,[ValidateSet('Info','Warning
 [string]$LogConf = "IpResetOnDhcpFail_Conf.log"
 [string]$LF = $BaseDirectory + "\" + $LogFile
 [string]$LC = $BaseDirectory + "\" + $LogConf
+[string]$LFOld = $LF + ".old"
+[string]$LCOld = $LC + ".old"
+[string]$RL = "\\sc-fs\SIA-PUBLIC$\IpResetOnDhcpFail.log"
 [int]$maxLogFileSizeKB = 1500
 [int]$maxLogConfSizeKB = 1500
 
@@ -33,8 +36,16 @@ if(!(Test-Path -path $BaseDirectory))
 [int]$logConfSize = 0
 if (Test-Path $LF -PathType leaf) { [int]$logFileSize = [math]::Round((Get-Item $LF).length/1024) }
 if (Test-Path $LC -PathType leaf) { [int]$logConfSize = [math]::Round((Get-Item $LC).length/1024) }
-if ($logFileSize -gt $maxLogFileSizeKB) { Remove-Item -Path $LF -Force }
-if ($logConfSize -gt $maxLogConfSizeKB) { Remove-Item -Path $LC -Force }
+if ($logFileSize -gt $maxLogFileSizeKB)
+{
+    Copy-Item $LF $LFOld -Force
+    Remove-Item -Path $LF -Force
+}
+if ($logConfSize -gt $maxLogConfSizeKB)
+{
+    Copy-Item $LC $LCOld -Force
+    Remove-Item -Path $LC -Force
+}
 
 Log2File -LogFile $LF -Message "Avvio" -Type "Info"
 
@@ -44,8 +55,8 @@ Log2File -LogFile $LC -Message $currentConf -Type "Info"
 $currentConf = ipconfig /all | Out-String -Width 200
 Log2File -LogFile $LC -Message $currentConf -Type "Info"
 
-$ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
-#$ipAddress =  Get-NetAdapter -Physical | Where-Object {($_.Status -eq "Up") -and (($_.PhysicalMediaType -eq "802.3") -or ($_.PhysicalMediaType -eq "Native 802.11"))} | Get-NetIPAddress -AddressFamily IPv4 | Select-Objbect IPAddress
+#$ipAddress = Get-NetAdapter -Physical | Where-Object {$_.Status -eq "Up"} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
+$ipAddress =  Get-NetAdapter -Physical | Where-Object {($_.Status -eq "Up") -and (($_.PhysicalMediaType -eq "802.3") -or ($_.PhysicalMediaType -eq "Native 802.11"))} | Get-NetIPAddress -AddressFamily IPv4 | Select-Object IPAddress
 
 if (-Not($ipAddress -is [array]))
 {
@@ -76,6 +87,9 @@ if (-Not($ipAddress -is [array]))
 
         Log2File -LogFile $LF -Message "Avvio azione correttiva: ipconfig /flushdns" -Type "Warning"
         ipconfig /flushdns
+
+        Start-Sleep -Seconds 5
+        Log2File -LogFile $RL -Message "$($env:COMPUTERNAME) $($ipAddress.IPAddress)" -Type "Info"
     }
     else
     {
