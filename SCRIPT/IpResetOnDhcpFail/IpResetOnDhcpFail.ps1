@@ -27,8 +27,8 @@ function Log2File([String]$LogFile,[String]$Message,[ValidateSet('Info','Warning
 
 
 # Logica
-if(!(Test-Path -path $BaseDirectory))  
-{  
+if(!(Test-Path -path $BaseDirectory))
+{
     New-Item -ItemType directory -Path $BaseDirectory
 }
 
