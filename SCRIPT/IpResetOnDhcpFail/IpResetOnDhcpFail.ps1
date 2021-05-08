@@ -89,11 +89,11 @@ if (-Not($ipAddress -is [array]))
         ipconfig /flushdns
 
         Start-Sleep -Seconds 5
-        Log2File -LogFile $RL -Message "$($env:COMPUTERNAME) $($ipAddress.IPAddress)" -Type "Info"
+        Log2File -LogFile $RL -Message "$($env:COMPUTERNAME) $($ipAddress.IPAddress)" -Type "Error"
     }
     else
     {
-        Log2File -LogFile $LF -Message "DHCP sembra essere operativo" -Type "Info"   
+        Log2File -LogFile $LF -Message "DHCP sembra essere operativo" -Type "Info"
     }
 
     Log2File -LogFile $LF -Message "Fine" -Type "Info"
