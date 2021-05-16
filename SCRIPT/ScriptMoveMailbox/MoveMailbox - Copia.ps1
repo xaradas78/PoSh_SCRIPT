@@ -32,9 +32,6 @@ $LAP = $BaseDirectory + "\" + $LogFile
 $RemoteHost = "sc-exch2016.aslteramo.it"
 $OWAHost = "owa.aslteramo.it"
 $domainController = "sc-network.aslteramo.it"
-$ADConnectHost = "sc-adconnect.aslteramo.it"
-$baseDN_esterni = "OU=__DA_ALLOCARE__,OU=Utenti,DC=aslteramo,DC=it"
-$baseDN_interni = "OU=Account Utente e Gruppi,OU=Utenti,DC=aslteramo,DC=it"
 $RoutingDomain = "aslteramo.mail.onmicrosoft.com"
 
 
@@ -55,6 +52,7 @@ try {
     $ADSession = New-PSSession -ComputerName $domainController -Credential $OnPremiseCredential
     Invoke-Command $ADSession -Scriptblock { Import-Module ActiveDirectory }
     Import-PSSession -Session $ADSession -module ActiveDirectory -AllowClobber -Prefix Remote
+
 }
 catch {
     Log2File -LogFile $LAP -Message "Credenziali AD non valide" -Type "Error"
