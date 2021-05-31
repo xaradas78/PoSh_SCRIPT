@@ -1,7 +1,10 @@
-# Per ogni mailbox del server $exchangeServer scrive nel file $outputFile il SamAccountName, l'indirizzo di posta e la data di scadenza dell'account
+# Per ogni mailbox del server $exchangeServer scrive nel file $outputFile il SamAccountName
+# l'indirizzo di posta e la data di scadenza dell'account
 
 $exchangeServer = "sc-exch2016"
 $outputFile = ".\test.txt"
+
+Remove-Item -Path $outputFile -Force -Confirm:$false
 
 $UserCredential = Get-Credential
 $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://$exchangeServer/PowerShell/ -Authentication Kerberos -Credential $UserCredential
@@ -16,8 +19,7 @@ foreach ($mb in $mailboxes)
 {
     $samAccountName = $mb.SamAccountName
     $accountExpirationDate = Get-ADUser -Identity $mb.SamAccountName -Properties * | Select-Object AccountExpirationDate
-    #$accountExpirationDate = Get-ADUser -Identity fidanzal -Properties * | Select-Object AccountExpirationDate
-    if ($accountExpirationDate.AccountExpirationDate -eq $null)
+    if ($null -eq $accountExpirationDate.AccountExpirationDate)
     {
         $accountExpirationDate = "NEVER"
     }
