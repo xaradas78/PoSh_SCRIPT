@@ -1,5 +1,5 @@
 # Per ogni mailbox del server $exchangeServer scrive nel file $outputFile il SamAccountName
-# l'indirizzo di posta e la data di scadenza dell'account..
+# l'indirizzo di posta e la data di scadenza dell'account
 
 $exchangeServer = "sc-exch2016"
 $outputFile = ".\test.txt"
