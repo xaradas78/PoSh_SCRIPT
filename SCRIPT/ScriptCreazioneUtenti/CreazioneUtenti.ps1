@@ -1,4 +1,4 @@
-[CmdLetBinding()]
+﻿[CmdLetBinding()]
 
 Param 
 (
@@ -385,7 +385,7 @@ foreach ($user in $ValidateUserCollection)
     
     Add-RemADGroupMember -Identity GRP_WWW_utente_standard -Members $user.username -Server $domainController
     Add-RemADGroupMember -Identity GRP_POLICY-PWD_Dipendenti -Members $user.username -Server $domainController
-    Add-RemADGroupMember -Identity GRP_POLICY-PWD_VPN_User -Members $user.username -Server $domainController
+    #Add-RemADGroupMember -Identity GRP_POLICY-PWD_VPN_User -Members $user.username -Server $domainController
     Set-RemADUser -Identity $user.username -Add @{'ASLTE-codiceFiscale'=$user.cf} -Server $domainController
     if ($user.matricola.Legth -gt 0)
     {
@@ -629,7 +629,7 @@ do
 		}
 	}
 	Log2File -LogFile $LAP -Message "Sleep 30 secondi" -Type "Info"
-	Start-Sleep -Seconds 30
+	sleep -Seconds 30
 } until ($false)
 
 

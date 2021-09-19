@@ -276,7 +276,7 @@ do
         }           
     }
     Log2File -LogFile $LAP -Message "Sleep 30 secondi" -Type "Info"
-    Start-Sleep -Seconds 30
+    sleep -Seconds 30
 } until ($false)
 
 
