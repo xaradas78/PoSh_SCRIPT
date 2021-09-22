@@ -5,6 +5,32 @@ Param
 	[Parameter(Mandatory=$True)][String]$InputFile
 )
 
+# Sets the MFA requirement state
+function Set-MfaState {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipelineByPropertyName=$True)]
+        $ObjectId,
+        [Parameter(ValueFromPipelineByPropertyName=$True)]
+        $UserPrincipalName,
+        [ValidateSet("Disabled","Enabled","Enforced")]
+        $State
+    )
+    Process {
+        Write-Verbose ("Setting MFA state for user '{0}' to '{1}'." -f $ObjectId, $State)
+        $Requirements = @()
+        if ($State -ne "Disabled") {
+            $Requirement =
+                [Microsoft.Online.Administration.StrongAuthenticationRequirement]::new()
+            $Requirement.RelyingParty = "*"
+            $Requirement.State = $State
+            $Requirements += $Requirement
+        }
+        Set-MsolUser -ObjectId $ObjectId -UserPrincipalName $UserPrincipalName `
+                     -StrongAuthenticationRequirements $Requirements
+    }
+}
+
 function Get-RandomCharacters($length, $characters) {
     $random = 1..$length | ForEach-Object { Get-Random -Maximum $characters.length }
     $private:ofs=""
@@ -497,6 +523,15 @@ $ADConnectSession = New-PSSession -ComputerName $ADConnectHost -Credential $OnPr
 Invoke-Command $ADConnectSession -Scriptblock { Start-ADSyncSyncCycle -Policy Delta }
 Log2File -LogFile $LAP -Message "Replica ADConnect e Sleep 400 Secondi" -Type "Info"
 Start-Sleep -Seconds 400
+
+# ATTIVAZIONE MFA
+Log2File -LogFile $LAP -Message "Avvio attivazione MFA" -Type "Info"
+foreach ($user in $ValidateUserCollection)
+{
+    Get-MsolUser -UserPrincipalName $user.email_asl | Set-MfaState -State Enabled
+    Start-Sleep -Seconds 5  
+}
+
 
 # MIGRAZIONE MAILBOX IN CLOUD
 Log2File -LogFile $LAP -Message "Avvio migrazione mail in cloud" -Type "Info"
