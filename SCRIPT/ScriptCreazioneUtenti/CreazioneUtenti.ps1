@@ -525,12 +525,12 @@ Log2File -LogFile $LAP -Message "Replica ADConnect e Sleep 400 Secondi" -Type "I
 Start-Sleep -Seconds 400
 
 # ATTIVAZIONE MFA
-Log2File -LogFile $LAP -Message "Avvio attivazione MFA" -Type "Info"
-foreach ($user in $ValidateUserCollection)
-{
-    Get-MsolUser -UserPrincipalName $user.email_asl | Set-MfaState -State Enabled
-    Start-Sleep -Seconds 5  
-}
+#Log2File -LogFile $LAP -Message "Avvio attivazione MFA" -Type "Info"
+#foreach ($user in $ValidateUserCollection)
+#{
+#    Get-MsolUser -UserPrincipalName $user.email_asl | Set-MfaState -State Enabled
+#    Start-Sleep -Seconds 5  
+#}
 
 
 # MIGRAZIONE MAILBOX IN CLOUD
