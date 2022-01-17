@@ -1,6 +1,5 @@
 # Per ogni mailbox in cloud scrive nel file $outputFile diverse informazioni
 
-
 $outputFile = ".\oncloudmailbox.txt"
 
 Remove-Item -Path $outputFile -Force -Confirm:$false
